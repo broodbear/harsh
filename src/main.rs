@@ -1,4 +1,4 @@
-use std::{error::Error, fs::File, io::{BufRead, BufReader}};
+use std::{error::Error, fs::File, io::{BufRead, BufReader}, str};
 use clap::Parser;
 
 /// Simple hash cracker
@@ -20,15 +20,19 @@ fn main() -> Result<(), Box<dyn Error>> {
     let wordlist_file = File::open(args.wordlist)?;
     let reader = BufReader::new(&wordlist_file);
 
-    for line in reader.lines() {
-        let line = line?;
-        let common_password = line.trim();
+    for line_result in reader.split(b'\n') {
+        let line = line_result?;
 
-        let digest = md5::compute(common_password.as_bytes());
+        let digest = md5::compute(line.clone());
         let hex_digest = format!("{:x}", digest);
 
         if args.hash == hex_digest {
-            println!("Password found: {}", &common_password);
+            let s = match str::from_utf8(&line) {
+                Ok(v) => v,
+                Err(e) => panic!("Invalid UTF-8 sequence: {}", e),
+            };
+
+            println!("Password found: {}", &s);
             return Ok(())
         }
     }

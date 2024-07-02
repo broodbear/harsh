@@ -1,0 +1,9 @@
+[package]
+name = "harsh"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.8", features = ["derive"] }
+hex = "0.4.3"
+md5 = "0.7.0"

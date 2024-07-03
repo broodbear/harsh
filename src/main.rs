@@ -9,6 +9,7 @@ enum Algorithm {
     #[default]
     Md5,
     Sha1,
+    Sha256,
 }
 
 /// Simple hash cracker
@@ -47,6 +48,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             hasher.update(line.clone());
 
             hex_digest = format!("{:x}", hasher.finalize());
+        } else if args.algo == Algorithm::Sha256 {
+            hex_digest = sha256::digest(line.clone());
         }
 
         if args.hash == hex_digest {

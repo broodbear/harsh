@@ -1,7 +1,7 @@
 use std::{error::Error, fs::File, io::{BufRead, BufReader}, str};
 use clap::Parser;
 use sha1::{Sha1, Digest};
-use sha2::Sha256;
+use sha2::{Sha256, Sha512};
 
 #[derive(
     clap::ValueEnum, Clone, Default, Debug, PartialEq
@@ -11,6 +11,7 @@ enum Algorithm {
     Md5,
     Sha1,
     Sha256,
+    Sha512,
 }
 
 /// Simple hash cracker
@@ -51,6 +52,11 @@ fn main() -> Result<(), Box<dyn Error>> {
             hex_digest = format!("{:x}", hasher.finalize());
         } else if args.algo == Algorithm::Sha256 {
             let mut hasher = Sha256::new();
+            hasher.update(line.clone());
+
+            hex_digest = format!("{:x}", hasher.finalize());
+        } else if args.algo == Algorithm::Sha512 {
+            let mut hasher = Sha512::new();
             hasher.update(line.clone());
 
             hex_digest = format!("{:x}", hasher.finalize());
